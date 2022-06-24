@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Table Kriteria</h4>
-                <p class="card-title-desc">Kriteria dapat ditambahkan dengan mengkil tombol tambah disamping atas</p>
+                <p class="card-title-desc">Kriteria dapat ditambahkan dengan mengklik tombol tambah disamping atas</p>
                 <div class="table-responsive">
                     <table class="table table-bordered align-middle table-nowrap mb-0">
                         <thead class="table-light">

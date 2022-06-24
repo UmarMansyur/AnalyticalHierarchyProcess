@@ -209,6 +209,9 @@ if (empty($_SESSION['id'])) {
                         case 'daftar_kriteria':
                             include "./kriteria/daftar_kriteria.php";
                             break;
+                        case 'perbandingan_kriteria':
+                            include "./kriteria/perbandingan_kriteria.php";
+                            break;
                         case 'daftar_alternatif':
                             include "./alternatif/daftar_alternatif.php";
                             break;
