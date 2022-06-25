@@ -71,47 +71,69 @@
                                     $criteria_1 = $_POST['id_kiri' . $i];
                                     $criteria_2 = $_POST['id_kanan' . $i];
                                     $value = $_POST['nilai_kriteria' . $i];
-                                    // $query = $conn->query("INSERT INTO tb_criteria_comparison VALUES (NULL, $criteria_1, $criteria_2, $priority, $value)");
-                                }
-                                $perbandingan = $conn->query("SELECT * FROM tb_criteria_comparison");
-                                $data_perbandingan = [];
-                                while ($array = mysqli_fetch_assoc($perbandingan)) {
-                                    array_push($data_perbandingan, $array);
-                                }
-                                $q = [];
-                                for ($u=0; $u < 3; $u++) { 
-                                    for ($w=0; $w < 3; $w++) { 
-                                        if ($u == $w) {
-                                            $q[$u][$w] = 1;
-                                        } else {
-                                            if ($data_perbandingan[$u]['criteria_1'] == $data_perbandingan[$u]['priority']) {
-                                                $q[$u][$w] = 1/$data_perbandingan[$u]['value'];
-                                                $q[$w][$u] = $data_perbandingan[$u]['value'];
-                                            } else {
-                                                $q[$w][$u] = 1/$data_perbandingan[$u]['value'];
-                                                $q[$u][$w] = $data_perbandingan[$u]['value'];
-                                            }
-                                        }
+                                    if ($priority == $criteria_1) {
+                                        $query = $conn->query("INSERT INTO tb_criteria_comparison VALUES (NULL, $criteria_1, $criteria_2, $priority, $value, '$_SESSION[id]')");
+                                        $value = 1 / $value;
+                                        $query = $conn->query("INSERT INTO tb_criteria_comparison VALUES (NULL, $criteria_1, $criteria_2, $criteria_2, $value, '$_SESSION[id]')");
+                                    } else {
+                                        $query = $conn->query("INSERT INTO tb_criteria_comparison VALUES (NULL, $criteria_1, $criteria_2, $priority, $value, '$_SESSION[id]')");
+                                        $value = 1 / $value;
+                                        $query = $conn->query("INSERT INTO tb_criteria_comparison VALUES (NULL, $criteria_1, $criteria_2, $criteria_1, $value, '$_SESSION[id]')");
                                     }
                                 }
-                                // echo $q[0][1] . ' ';
-                                for ($baris=0; $baris < 3; $baris++) { 
-                                    for ($kolom=0; $kolom < 3; $kolom++) { 
-                                        echo $q[$baris][$kolom] . ' ';
+                            }
+                            $criteria1 = $conn->query("SELECT * FROM `tb_criteria_comparison` WHERE criteria_1 = priority");
+                            $criteria2 = $conn->query("SELECT * FROM `tb_criteria_comparison` WHERE criteria_2 = priority");
+                            $criteria_kiri = [];
+                            while ($getData = mysqli_fetch_assoc($criteria1)) {
+                                array_push($criteria_kiri, $getData['value']);
+                            }
+                            $criteria_kanan = [];
+                            while ($getData = mysqli_fetch_assoc($criteria2)) {
+                                array_push($criteria_kanan, $getData['value']);
+                            }
+                            $perbandingan = [];
+                            $atas = 0;
+                            $bawah = 0;
+                            for ($i = 0; $i < 3; $i++) {
+                                for ($ia = 0; $ia < 3; $ia++) {
+                                    if ($i == $ia) {
+                                        $perbandingan[$i][$ia] = 1;
+                                    } elseif ($ia > $i) {
+                                        $perbandingan[$i][$ia] = $criteria_kiri[$atas];
+                                        $atas++;
+                                    } elseif ($ia < $i) {
+                                        $perbandingan[$i][$ia] = $criteria_kanan[$bawah];
+                                        $bawah++;
                                     }
-                                    echo "<br/>";
                                 }
-                                $jumlah_c1 = 0;
-                                for ($coba=0; $coba < 3; $coba++) { 
-                                    $jumlah_c1 = $jumlah_c1 + $q[$coba][0];
+                            }
+                            $temp_jumlah = [];
+                            $table_normal = [];
+                            for ($baris = 0; $baris < 3; $baris++) {
+                                $jumlah = 0;
+                                for ($kolom = 0; $kolom < 3; $kolom++) {
+                                    $jumlah = $jumlah + $perbandingan[$kolom][$baris];
                                 }
-                                echo $jumlah_c1;
+                                array_push($temp_jumlah, $jumlah);
+                            }
+                            $kriteria = $conn->query("SELECT * FROM tb_criteria");
+                            $temp_kriteria = [];
+                            while ($getData = mysqli_fetch_assoc($kriteria)) {
+                                array_push($temp_kriteria, $getData['criteria_id']);
+                            }
+                            for ($i = 0; $i < 3; $i++) {
+                                for ($u = 0; $u < 3; $u++) {
+                                    $table_normal[$i][$u] = $perbandingan[$i][$u] / $temp_jumlah[$u];
+                                    $nilainya = $perbandingan[$i][$u] / $temp_jumlah[$u];
+                                    $insert = $conn->query("INSERT INTO tb_normalisasi_kriteria VALUES (NULL, '$temp_kriteria[$i]', '$temp_kriteria[$u]', '$nilainya')");
+                                }
+                                echo "</br>";
                             }
                             ?>
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </div>
     </div>
