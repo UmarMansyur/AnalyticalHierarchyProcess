@@ -137,10 +137,10 @@
                                         echo "</br>";
                                     }
                                 }
-                                if ($alternatif) {
+                                if (isset($alternatif)) {
                                     echo "<script>
                                 alert('Berhasil');
-                                window.location.href = 'index.php?page=perbandingan_alternatif';
+                                window.location.href = 'index.php?page=perbandingan_alternatif&id_pengguna='$_SESSION[id]'&sub='$_GET[sub]'&id_criteria='$_GET[id_criteria]';
                             </script>";
                                 }
                                 ?>
@@ -285,7 +285,7 @@
                                         echo "</br>";
                                     }
                                 }
-                                if ($alternatif) {
+                                if (isset($alternatif)) {
                                     echo "<script>
                                 alert('Berhasil');
                                 window.location.href = '';
@@ -419,12 +419,54 @@
                         </table>
                     </div>
                     <?php if ($ci / $ratio['nilai_ir'] < 0.1) : ?>
+                        <?php
+                        $cek = mysqli_fetch_assoc($conn->query("SELECT count(id_rangking) FROM tb_rangking WHERE id_users = '$_SESSION[id]'"));
+                        if ($cek <= 0) {
+                            $arrayKriteria = [];
+                            $dataKriteria = $conn->query("SELECT * FROM tb_criteria ORDER BY criteria_id");
+                            while ($d = mysqli_fetch_assoc($dataKriteria)) {
+                                array_push($arrayKriteria, $d);
+                            }
+                            $arrayAlternatif = [];
+                            $dataAlternatif = $conn->query("SELECT * FROM tb_alternatif ORDER BY alternatif_id");
+                            while ($d = mysqli_fetch_assoc($dataAlternatif)) {
+                                array_push($arrayAlternatif, $d);
+                            }
+                            $kriteria_eigen = [];
+                            $getVektorEigen = $conn->query("SELECT SUM(nilai/(SELECT count(criteria_id) FROM tb_criteria)) AS eigen FROM tb_normalisasi_kriteria WHERE id_users = '$_SESSION[id]' GROUP BY criteria_1;");
+                            while ($eigentKriteria = mysqli_fetch_assoc($getVektorEigen)) {
+                                array_push($kriteria_eigen, $eigentKriteria);
+                            }
+
+                            $alternatif_eigen = [];
+                            $getVektorAlternatif = $conn->query("SELECT SUM(nilai/(SELECT count(alternatif_id) FROM tb_alternatif)) AS eigen FROM tb_normalisasi_alternatif WHERE criteria_id = '$_GET[id_criteria]' AND id_users = '$_SESSION[id]' GROUP BY alternatif_1;");
+                            while ($eigenAlternatif = mysqli_fetch_assoc($getVektorAlternatif)) {
+                                array_push($alternatif_eigen, $eigenAlternatif);
+                            }
+                            $nilaiEigenAlternatif = 0;
+                            for ($index = 0; $index < $banyak_alternatif['banyak']; $index++) {
+                                $nilaiEigenAlternatif = $nilaiEigenAlternatif + $kriteria_eigen[$index]['eigen'] * $alternatif_eigen[$index]['eigen'];
+                            }
+                            $ini = 0;
+                            for ($h = 0; $h < $banyak_alternatif['banyak']; $h++) {
+                                if ($_GET['sub'] == $arrayKriteria[$h]['description']) {
+                                    $ini = $h;
+                                }
+                            }
+
+                            $id_alternatif = $arrayAlternatif[$ini]['alternatif_id'];
+                            $conn->query("INSERT INTO tb_rangking VALUES(NULL, '$_SESSION[id]', '$id_alternatif', '$nilaiEigenAlternatif')");
+                        }
+
+                        // echo $arrayAlternatif[$ini]['alternatif_id'];
+                        // var_dump($getIdAlternatif);
+                        ?>
                         <div class="float-end">
                             <button type="button" class="btn btn-success waves-effect btn-label waves-light"><i class="dripicons-arrow-right label-icon"></i> Lanjut</button>
                         </div>
                     <?php else : ?>
                         <div class="float-end">
-                            <a href="?page=perbandingan_alternatif&id_pengguna=<?= $_SESSION['id'] ?>" class="btn btn-danger waves-effect btn-label waves-light"><i class="dripicons-arrow-up label-icon"></i> Ubah nilai</a>
+                            <a href="?page=perbandingan_alternatif&id_pengguna=<?= $_SESSION['id'] ?>&sub=<?= $_GET['sub'] ?>&id_criteria=<?= $_GET['id_criteria'] ?>" class="btn btn-danger waves-effect btn-label waves-light"><i class="dripicons-arrow-up label-icon"></i> Ubah nilai</a>
                         </div>
                     <?php endif ?>
                 </div>

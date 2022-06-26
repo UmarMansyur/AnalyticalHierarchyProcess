@@ -37,13 +37,15 @@
                                     <td class="text-center"><?= $i ?></td>
                                     <td><?= $getData['description'] ?></td>
                                     <td class="text-center">
-                                        <a href="" id="editalternatif" data-alternatifid="<?= $getData['alternatif_id'] ?>" data-description="<?= $getData['description'] ?>" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#editAlternatif"><i class="fas fa-pen"></i></a>
+                                        <a href="" id="editalternatif<?= $i ?>" data-alternatifid="<?= $getData['alternatif_id'] ?>" data-description="<?= $getData['description'] ?>" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#editAlternatif"><i class="fas fa-pen"></i></a>
                                         <script>
-                                            const element = document.querySelector("#editalternatif");
-                                            element.addEventListener("click", function() {
-                                                const idkrit = document.getElementById('id_alternatif').setAttribute('value', element.dataset.alternatifid);
-                                                const alternatif = document.getElementById('edit_alternatif').setAttribute('value', element.dataset.description);
-                                            });
+                                            document.getElementById('editalternatif<?=$i?>').onclick = function () {
+                                                const data = document.querySelector('#editalternatif<?=$i?>');
+                                                const id = data.dataset.alternatifid;
+                                                const value = data.dataset.description;
+                                                document.getElementById('edit_alternatif').value = value;
+                                                document.getElementById('id_alternatif').value = id;
+                                            }
                                         </script>
                                     </td>
                                     <td class="text-center">

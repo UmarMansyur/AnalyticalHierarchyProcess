@@ -37,13 +37,15 @@
                                     <td class="text-center"><?= $i ?></td>
                                     <td><?= $getData['description'] ?></td>
                                     <td class="text-center">
-                                        <a href="" id="editKriteria" data-criteriaid = "<?= $getData['criteria_id'] ?>"  data-description = "<?= $getData['description'] ?>" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#editCriteria"><i class="fas fa-pen"></i></a>
+                                        <a href="" id="editKriteria<?=$i?>" data-criteriaid = "<?= $getData['criteria_id'] ?>"  data-description = "<?= $getData['description'] ?>" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#editCriteria"><i class="fas fa-pen"></i></a>
                                         <script>
-                                            const element = document.querySelector("#editKriteria");
-                                            element.addEventListener("click", function(){
-                                                const idkrit = document.getElementById('id_kriteria').setAttribute('value', element.dataset.criteriaid);
-                                                const criteria = document.getElementById('edit_kriteria').setAttribute('value', element.dataset.description);
-                                            });
+                                            document.getElementById('editKriteria<?=$i?>').onclick = function () {
+                                                const data = document.querySelector('#editKriteria<?=$i?>');
+                                                const id = data.dataset.criteriaid;
+                                                const value = data.dataset.description;
+                                                document.getElementById('edit_kriteria').value = value;
+                                                document.getElementById('id_kriteria').value = id;
+                                            }
                                         </script>
                                     </td>
                                     <td class="text-center">

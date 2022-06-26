@@ -183,7 +183,7 @@ if (empty($_SESSION['id'])) {
                         </li>
                         <li class="menu-title" key="t-menu">Hasil</li>
                         <li>
-                            <a href="?page=tambah_alternatif">
+                            <a href="?page=lihat_hasil">
                                 <i class="bx bx-analyse"></i>
                                 <span key="t-layouts">Lihat Hasil</span>
                             </a>
@@ -217,6 +217,9 @@ if (empty($_SESSION['id'])) {
                             break;
                         case 'perbandingan_alternatif':
                             include "./alternatif/perbandingan_alternatif.php";
+                            break;
+                        case 'lihat_hasil':
+                            include "./lihat_hasil.php";
                             break;
                         default:
                             echo "<script>

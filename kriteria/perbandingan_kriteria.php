@@ -285,7 +285,7 @@
                                         echo "</br>";
                                     }
                                 }
-                                if ($kriteria) {
+                                if (isset($kriteria)) {
                                     echo "<script>
                                 alert('Berhasil');
                                 window.location.href = 'index.php?page=perbandingan_kriteria';
@@ -339,7 +339,6 @@
                                             <td><?= round($total['jumlah'], 3) ?></td>
                                             <td><?= round($total['jumlah'] / $banyak_kriteria['banyak'], 3) ?></td>
                                         <?php endwhile ?>
-
                                     </tr>
                                 <?php endwhile ?>
 
