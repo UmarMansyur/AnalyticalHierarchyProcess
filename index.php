@@ -25,6 +25,12 @@ if (empty($_SESSION['id'])) {
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
     <!-- preloader -->
     <link rel="stylesheet" href="assets/css/preloader.min.css">
+    <!-- DataTables -->
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Responsive datatable examples -->
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
 </head>
 
 <body data-sidebar="dark">
@@ -143,6 +149,12 @@ if (empty($_SESSION['id'])) {
                         </li>
                         <li class="menu-title" key="t-menu">Data</li>
                         <li>
+                            <a href="?page=pengguna" class="waves-effect">
+                                <i class="bx bx-user"></i>
+                                <span key="t-dashboards">Pengguna</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 <i class="bx bx-stats"></i>
                                 <span key="t-layouts">Kriteria</span>
@@ -173,7 +185,7 @@ if (empty($_SESSION['id'])) {
                                         $query = $conn->query("SELECT * FROM tb_criteria");
                                         while ($getData = mysqli_fetch_assoc($query)) :
                                         ?>
-                                            <li><a href="?page=perbandingan_alternatif&sub=<?=$getData['description'] ?>&id_criteria=<?= $getData['criteria_id'] ?>" key="t-horizontal"><?=$getData['description'] ?></a></li>
+                                            <li><a href="?page=perbandingan_alternatif&sub=<?= $getData['description'] ?>&id_criteria=<?= $getData['criteria_id'] ?>" key="t-horizontal"><?= $getData['description'] ?></a></li>
                                         <?php
                                         endwhile ?>
 
@@ -188,6 +200,7 @@ if (empty($_SESSION['id'])) {
                                 <span key="t-layouts">Lihat Hasil</span>
                             </a>
                         </li>
+
                     </ul>
                 </div>
                 <!-- Sidebar -->
@@ -205,6 +218,9 @@ if (empty($_SESSION['id'])) {
                     switch ($page) {
                         case 'dashboard':
                             include "./dashboard.php";
+                            break;
+                        case 'pengguna':
+                            include "./pengguna.php";
                             break;
                         case 'daftar_kriteria':
                             include "./kriteria/daftar_kriteria.php";
@@ -260,11 +276,28 @@ if (empty($_SESSION['id'])) {
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
 
-    <!-- apexcharts -->
-    <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <!-- Saas dashboard init -->
     <script src="assets/js/pages/saas-dashboard.init.js"></script>
+    <!-- Required datatable js -->
+    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Buttons examples -->
+    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootßstrap4.min.js"></script>
+    <script src="assets/libs/jszip/jszip.min.js"></script>
+    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+
+    <!-- Responsive examples -->
+    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+    <!-- Datatable init js -->
+    <script src="assets/js/pages/datatables.init.js"></script>
 
     <script src="assets/js/app.js"></script>
     <script>
@@ -276,6 +309,64 @@ if (empty($_SESSION['id'])) {
         }
     </script>
 
+    <?php
+    $query = $conn->query("SELECT * FROM tb_rangking LEFT JOIN tb_alternatif ON tb_rangking.id_alternatif = tb_alternatif.alternatif_id WHERE id_users = '$_SESSION[id]' ORDER BY nilai DESC");
+    $series = [];
+    while ($data = mysqli_fetch_assoc($query)) {
+        array_push($series, [
+            'name' => $data['description'],
+            'data'  => [round($data['nilai'], 3)]
+        ]);
+    };
+    $trial = json_encode($series);
+    ?>
+    <script>
+        var options = {
+
+            series: <?= $trial ?>,
+
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded'
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: ['alternatif'],
+            },
+            yaxis: {
+                title: {
+                    text: 'Nilai'
+                }
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function(val) {
+                        return 'Nilai' + val
+                    }
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector('#hasilChart'), options);
+        chart.render();
+    </script>;
 </body>
 
 </html>

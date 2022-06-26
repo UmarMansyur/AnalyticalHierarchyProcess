@@ -18,22 +18,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
-                        $query = $conn->query("SELECT * FROM tb_rangking LEFT JOIN tb_alternatif ON tb_rangking.id_alternatif = tb_alternatif.alternatif_id WHERE id_users = '$_SESSION[id]' ORDER BY nilai DESC");
-                        $key = 1;
-                        while($data = mysqli_fetch_assoc($query)) :
+                    <?php
+                    $query = $conn->query("SELECT * FROM tb_rangking LEFT JOIN tb_alternatif ON tb_rangking.id_alternatif = tb_alternatif.alternatif_id WHERE id_users = '$_SESSION[id]' ORDER BY nilai DESC");
+                    $key = 1;
+                    while ($data = mysqli_fetch_assoc($query)) :
                     ?>
-                    <tr>
-                        <td><?= $key ?></td>
-                        <td><?=  $data['description']?></td>
-                        <td><?= $data['nilai']?></td>
-                    </tr>
-                    <?php $key++; endwhile ?>
+                        <tr>
+                            <td><?= $key ?></td>
+                            <td><?= $data['description'] ?></td>
+                            <td><?= round($data['nilai'],3) ?></td>
+                        </tr>
+                    <?php $key++;
+                    endwhile ?>
                 </tbody>
             </table>
         </div>
     </div>
     <div class="col-lg-6">
-
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Diagram Perangkingan</h4>
+                    <div id="hasilChart"></div>
+                
+            </div>
+        </div>
     </div>
 </div>
