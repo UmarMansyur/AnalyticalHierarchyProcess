@@ -15,7 +15,7 @@ if (empty($_SESSION['id'])) {
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="/assets/coli.svg">
 
     <!-- Bootstrap Css -->
     <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
@@ -79,7 +79,7 @@ if (empty($_SESSION['id'])) {
                                 <img src="assets/images/logo-light.svg" alt="" height="22">
                             </span>
                             <span class="logo-lg">
-                                <img src="assets/images/logo-light.png" alt="" height="19">
+                                <img src="/assets/dddddd.svg" height="90">
                             </span>
                         </a>
                     </div>
@@ -110,7 +110,7 @@ if (empty($_SESSION['id'])) {
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
-                            <span class="d-none d-xl-inline-block ms-1" key="t-henry">Henry</span>
+                            <span class="d-none d-xl-inline-block ms-1" key="t-henry"><?= $_SESSION['nama_pengguna'] ?></span>
                             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
@@ -173,7 +173,7 @@ if (empty($_SESSION['id'])) {
                                         $query = $conn->query("SELECT * FROM tb_criteria");
                                         while ($getData = mysqli_fetch_assoc($query)) :
                                         ?>
-                                            <li><a href="layouts-horizontal.html" key="t-horizontal"><?=$getData['description'] ?></a></li>
+                                            <li><a href="?page=perbandingan_alternatif&sub=<?=$getData['description'] ?>&id_criteria=<?= $getData['criteria_id'] ?>" key="t-horizontal"><?=$getData['description'] ?></a></li>
                                         <?php
                                         endwhile ?>
 
@@ -214,6 +214,9 @@ if (empty($_SESSION['id'])) {
                             break;
                         case 'daftar_alternatif':
                             include "./alternatif/daftar_alternatif.php";
+                            break;
+                        case 'perbandingan_alternatif':
+                            include "./alternatif/perbandingan_alternatif.php";
                             break;
                         default:
                             echo "<script>

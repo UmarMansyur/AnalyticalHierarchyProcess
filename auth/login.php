@@ -9,6 +9,7 @@ if (isset($_POST['login'])) {
     if ($query) {
         if (password_verify($password, $data['password'])) {
             $_SESSION['id'] = $data['user_id'];
+            $_SESSION['nama_pengguna'] = $data['username'];
             header('location:../index.php?page=dashboard');
         } else {
             echo "<script>
